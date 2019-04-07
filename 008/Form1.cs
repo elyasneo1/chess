@@ -23,6 +23,93 @@ namespace _008
         public Form1()
         {
             InitializeComponent();
+            labelCheck.Visible = false;
+        }
+        private void buttonStart(object sender, EventArgs e)
+        {
+            //First Number : 0 -> Black , 1 -> White
+            //Second Number : 
+            // 1 -> sarbaz 
+            // 2 -> rokh
+            // 3 -> asb
+            // 4 -> fil
+            // 5 -> vazir
+            // 6 -> shah
+            table = new int[8, 8]      //Init Table with Pieces
+            {
+                {02, 03, 04, 05, 06, 04, 03, 02},
+                {01, 01, 01, 01, 01, 01, 01, 01},
+                {00, 00, 00, 00, 00, 00, 00, 00},
+                {00, 00, 00, 00, 00, 00, 00, 00},
+                {00, 00, 00, 00, 00, 00, 00, 00},
+                {00, 00, 00, 00, 00, 00, 00, 00},
+                {11, 11, 11, 11, 11, 11, 11, 11},
+                {12, 13, 14, 15, 16, 14, 13, 12},
+            };
+            bt = new uC[8, 8];
+            go = new int[8, 8];
+
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+
+                    bt[i, j] = new uC();
+                    bt[i, j].Parent = this;
+                    bt[i, j].Location = new Point(j * 50 + 50, i * 50 + 50);
+                    bt[i, j].pozX = j;
+                    bt[i, j].pozY = i;
+                    bt[i, j].Size = new Size(50, 50);
+                    bt[i, j].Click += new EventHandler(uC_Click);
+                    if (i % 2 == 0)
+                        if (j % 2 == 1)
+                            bt[i, j].BackColor = Color.Black;
+                        else
+                            bt[i, j].BackColor = Color.White;
+                    else
+                        if (j % 2 == 1)
+                        bt[i, j].BackColor = Color.White;
+                    else
+                        bt[i, j].BackColor = Color.Black;
+                    bt[i, j].BackgroundImageLayout = ImageLayout.Center;
+
+                }
+            }
+
+            validate();
+            drawing();
+        }
+        public void validate()
+        {
+            int i, j;
+            stausTextView.Text = null;
+            for (i = 0; i < 8; i++)
+                for (j = 0; j < 8; j++)
+                {
+                    if (table[i, j] != 0)
+                        go[i, j] = 1;
+                    else
+                        go[i, j] = 0;
+                }
+            for (i = 0; i < 8; i++)
+            {
+                for (j = 0; j < 8; j++)
+                {
+                    stausTextView.Text += go[i, j].ToString();
+                    if (i % 2 == 0)
+                        if (j % 2 == 1)
+                            bt[i, j].BackColor = Color.Black;
+                        else
+                            bt[i, j].BackColor = Color.White;
+                    else
+                        if (j % 2 == 1)
+                        bt[i, j].BackColor = Color.White;
+                    else
+                        bt[i, j].BackColor = Color.Black;
+                }
+                stausTextView.Text += "\r\n";
+            }
         }
         public void drawing()
         {
@@ -47,29 +134,51 @@ namespace _008
                         case 16: bt[i, j].BackgroundImage = System.Drawing.Image.FromFile("Image\\KW.gif"); break;
                     }
                 }
-            textBox1.Text = null;
+            stausTextView.Text = null;
             for (i = 0; i < 8; i++)
             {
                 for (j = 0; j < 8; j++)
                 {
-                    textBox1.Text += go[i, j].ToString();
+                    stausTextView.Text += go[i, j].ToString();
                     if (go[i, j] == 2)
-                        bt[i, j].BackColor = Color.Green;
+                        bt[i, j].BackColor = Color.Green; //For Possible destination
                     else
                         if (i % 2 == 0)
                             if (j % 2 == 1)
                                 bt[i, j].BackColor = Color.Black;
                             else
                                 bt[i, j].BackColor = Color.White;
-                        else
+                        else                                             //Line 60 to 68 For Make Black and White Table 
                             if (j % 2 == 1)
                                 bt[i, j].BackColor = Color.White;
                             else
                                 bt[i, j].BackColor = Color.Black;
                     if (go[i, j] == 3)
-                        bt[i, j].BackColor = Color.Blue;
+                        bt[i, j].BackColor = Color.Blue;               //For Show Select Piece
                 }
-                textBox1.Text += "\r\n";
+                stausTextView.Text += "\r\n";
+            }
+           
+        }
+        void uC_Click(object sender, EventArgs e)
+        {
+
+            int i, j;
+            i = (sender as uC).pozY;
+            j = (sender as uC).pozX;
+            switch (go[i, j])
+            {
+                case 1:
+                    Pieces(table[i, j], i, j,false);
+                    I = i;
+                    J = j; break;
+
+                case 3:
+                case 0:
+                    validate(); break;
+
+                case 2:
+                    change(i, j); break;
             }
         }
         public void delete()
@@ -82,37 +191,7 @@ namespace _008
             I = 0;
             J = 0;
         }
-        public void validate()
-        {
-            int i, j;
-            textBox1.Text = null;
-            for (i = 0; i < 8; i++)
-                for (j = 0; j < 8; j++)
-                {
-                    if (table[i, j] != 0)
-                        go[i, j] = 1;
-                    else
-                        go[i, j] = 0;
-                }
-            for (i = 0; i < 8; i++)
-            {
-                for (j = 0; j < 8; j++)
-                {
-                    textBox1.Text += go[i, j].ToString();
-                    if (i % 2 == 0)
-                        if (j % 2 == 1)
-                            bt[i, j].BackColor = Color.Black;
-                        else
-                            bt[i, j].BackColor = Color.White;
-                    else
-                        if (j % 2 == 1)
-                            bt[i, j].BackColor = Color.White;
-                        else
-                            bt[i, j].BackColor = Color.Black;
-                }
-                textBox1.Text += "\r\n";
-            }
-        }
+  
         public void change(int i, int j)
         {
             if (table[I, J] == 02)
@@ -134,21 +213,75 @@ namespace _008
             if (table[I, J] == 16)
             {
                 if (i == 7 && j == 2)
-                { table[7, 3] = 02; table[7, 0] = 0; }
+                {
+                    table[7, 3] = 02;
+                    table[7, 0] = 0;
+                }
                 if (i == 7 && j == 6)
-                { table[7, 5] = 02; table[7, 7] = 0; }
+                {
+                    table[7, 5] = 02;
+                    table[7, 7] = 0;
+                }
             }
+           
             table[I, J] = 0;
             validate();
+            check();
             drawing();
+    
+
         }
-        public void Pieces(int x, int i, int j)
+        public void check()
+        {
+            labelCheck.Visible = false;
+            for (int r = 0; r < 8; r++)
+            {
+                for (int c = 0; c < 8; c++)
+                {
+                    if (table[r, c] != 0)
+                    {
+                        Pieces(table[r, c], r, c,true);
+
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                if (go[i, j] == 2)
+                                {
+                                    if (table[r, c] > 10)
+                                    {
+                                        if (table[i, j] == 06)
+                                        {
+                                            labelCheck.Text = "Black Check!!!!";
+                                            labelCheck.Visible = true;
+                                        }
+
+                                    }
+                                    if (table[r, c] < 10)
+                                    {
+                                        if (table[i, j] == 16)
+                                        {
+                                            labelCheck.Text = "White Check!!!!";
+                                            labelCheck.Visible = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                   
+                }
+            }
+         
+            validate();
+        }
+        public void Pieces(int x, int i, int j,bool isForCheck)
         {
             delete();
             int c;
             switch (x)
             {
-                case 1:
+                case 1:  // 1 = 01 actually srbaz sefid
                     if (j - 1 >= 0)
                         if (table[i + 1, j - 1] > 10)
                             go[i + 1, j - 1] = 2;
@@ -161,7 +294,7 @@ namespace _008
                         if (table[i + 2, j] == 0)
                             go[i + 2, j] = 2;
                     break;
-                case 2:
+                case 2:   // 2 = 02 actually rokh sefid
                     for (c = i - 1; c > -1; c--)
                         if (table[c, j] == 0)
                         { go[c, j] = 2; }
@@ -538,73 +671,13 @@ namespace _008
                     break;
             }
             go[i, j] = 3;
-            drawing();
+       
+            if(!isForCheck)
+                drawing();
+            
+           
         }
-        private void buttonStart(object sender, EventArgs e)
-        {
-            table = new int[8, 8]
-            {
-                {02, 03, 04, 05, 06, 04, 03, 02},
-                {01, 01, 01, 01, 01, 01, 01, 01},
-                {00, 00, 00, 00, 00, 00, 00, 00},
-                {00, 00, 00, 00, 00, 00, 00, 00},
-                {00, 00, 00, 00, 00, 00, 00, 00},
-                {00, 00, 00, 00, 00, 00, 00, 00},
-                {11, 11, 11, 11, 11, 11, 11, 11},
-                {12, 13, 14, 15, 16, 14, 13, 12},
-            };
-            bt = new uC[8, 8];
-            go = new int[8, 8];
-
-
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-
-                    bt[i, j] = new uC();
-                    bt[i, j].Parent = this;
-                    bt[i, j].Location = new Point(j * 50 + 50, i * 50 + 50);
-                    bt[i, j].pozX = j;
-                    bt[i, j].pozY = i;
-                    bt[i, j].Size = new Size(50, 50);
-                    bt[i, j].Click += new EventHandler(uC_Click);
-                    if (i % 2 == 0)
-                        if (j % 2 == 1)
-                            bt[i, j].BackColor = Color.Black;
-                        else
-                            bt[i, j].BackColor = Color.White;
-                    else
-                        if (j % 2 == 1)
-                            bt[i, j].BackColor = Color.White;
-                        else
-                            bt[i, j].BackColor = Color.Black;
-                    bt[i, j].BackgroundImageLayout = ImageLayout.Center;
-                }
-            }
-            validate();
-            drawing();
-        }
-        void uC_Click(object sender, EventArgs e)
-        {
-            //throw new NotImplementedException();
-
-            int i, j;
-            i = (sender as uC).pozY;
-            j = (sender as uC).pozX;
-            switch (go[i, j])
-            {
-                case 1:
-                    Pieces(table[i, j], i, j);
-                    I = i;
-                    J = j; break;
-
-                case 3:
-                    validate(); break;
-
-                case 2:
-                    change(i, j); break;
-            }
-        }
+      
+      
     }
 }

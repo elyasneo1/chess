@@ -35,8 +35,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Name = "uC";
-            this.Size = new System.Drawing.Size(50, 50);
+            this.Size = new System.Drawing.Size(48, 48);
             this.Load += new System.EventHandler(this.uC_Load);
             this.ResumeLayout(false);
 
