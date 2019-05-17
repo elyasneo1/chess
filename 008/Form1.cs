@@ -15,6 +15,8 @@ namespace _008
         bool move_RB = true;
         bool move_QW = true;
         bool move_RW = true;
+        int wMove = 0;
+        int bMove = 0;
         int[,] table;
         int[,] go;
         uC[,] bt;
@@ -190,10 +192,61 @@ namespace _008
                 }
             I = 0;
             J = 0;
+            
+            
+        }
+        public String getName(int x)
+        {
+            String s = "";
+            if (x / 10 > 0)
+            {
+                s += "White ";
+            }
+            else s += "Black ";
+
+            switch (x%10)
+            {
+                case 1: s += "sarbaz";break;
+
+                case 2: s += "rokh"; break;
+
+                case 3: s += "asb"; break;
+
+                case 4: s += "fil"; break;
+
+                case 5: s += "vazir"; break;
+
+                default: s += "shah";break;
+
+            }
+
+            return s;
         }
   
         public void change(int i, int j)
         {
+            if (table[I, J] > 10)
+            {
+                wMove++;
+                if (table[i, j] < 10 && table[i, j] != 0)
+                {
+                    string s = getName(table[i, j]);
+                    labelBD.Text += "\n" + s;
+                }
+            }
+            else if (table[I, J] < 10 && table[I, J] > 0)
+            {
+                bMove++;
+                if (table[i, j] > 10 && table[i, j] != 0)
+                {
+                    string s = getName(table[i, j]);
+                    labelWD.Text += "\n" + s;
+                }
+            }
+               
+
+            labaleBMC.Text = bMove.ToString();
+            labaleWMC.Text = wMove.ToString();
             if (table[I, J] == 02)
                 move_RB = false;
             if (table[I, J] == 12)
@@ -223,7 +276,22 @@ namespace _008
                     table[7, 7] = 0;
                 }
             }
-           
+
+            if (table[I, J] == 1)
+            {
+                if(i==7)
+                {
+                    table[i, j] = 5;
+                }
+            }
+            if (table[I, J] == 11)
+            {
+                if (i == 0)
+                {
+                    table[i, j] = 15;
+                }
+            }
+
             table[I, J] = 0;
             validate();
             check();
@@ -275,13 +343,19 @@ namespace _008
          
             validate();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
         public void Pieces(int x, int i, int j,bool isForCheck)
         {
             delete();
             int c;
             switch (x)
             {
-                case 1:  // 1 = 01 actually srbaz sefid
+                case 1:  // 1 = 01 actually srbaz Black
                     if (j - 1 >= 0)
                         if (table[i + 1, j - 1] > 10)
                             go[i + 1, j - 1] = 2;
@@ -294,7 +368,7 @@ namespace _008
                         if (table[i + 2, j] == 0)
                             go[i + 2, j] = 2;
                     break;
-                case 2:   // 2 = 02 actually rokh sefid
+                case 2:   // 2 = 02 actually rokh Black
                     for (c = i - 1; c > -1; c--)
                         if (table[c, j] == 0)
                         { go[c, j] = 2; }
@@ -398,36 +472,77 @@ namespace _008
                 case 5:
                     for (c = 1; c < 8; c++)
                         if (j - c >= 0)
-                            if (table[i, j - c] == 0 || table[i, j - c] > 10)
-                            { go[i, j - c] = 2; if (table[i, j - c] > 10) break; }
+                            if (table[i, j - c] == 0)
+                            { go[i, j - c] = 2; }
+                            else { 
+                                if (table[i, j - c] < 10) break;
+                                else go[i, j - c] = 2;break;
+                            }
                     for (c = 1; c < 8; c++)
                         if (j + c < 8)
-                            if (table[i, j + c] == 0 || table[i, j + c] > 10)
-                            { go[i, j + c] = 2; if (table[i, j + c] > 10) break; }
-                    for (c = 1; c < 8; c++)
-                        if (i - c >= 0)
-                            if (table[i - c, j] == 0 || table[i - c, j] > 10)
-                            { go[i - c, j] = 2; if (table[i - c, j] > 10) break; }
+
+                            if (table[i, j + c] == 0)
+                            { go[i, j + c] = 2; }
+                            else
+                            {
+                                if (table[i, j + c] < 10) break;
+                                else go[i, j + c] = 2; break;
+                            }
                     for (c = 1; c < 8; c++)
                         if (i + c < 8)
-                            if (table[i + c, j] == 0 || table[i + c, j] > 10)
-                            { go[i + c, j] = 2; if (table[i + c, j] > 10) break; }
+                                if (table[i+c, j ] == 0)
+                                    { go[i + c, j] = 2; }
+                                    else
+                                    {
+                                        if (table[i + c, j] < 10) break;
+                                        else go[i + c, j] = 2; break;
+                                    }
+                    for (c = 1; c < 8; c++)
+                        if (i - c >= 0)
+                            if (table[i - c, j] == 0)
+                            { go[i - c, j] = 2; }
+                            else
+                            {
+                                if (table[i - c, j] < 10) break;
+                                else go[i - c, j] = 2; break;
+                            }
                     for (c = 1; c < 8; c++)
                         if (i - c >= 0 && j - c >= 0)
-                            if (table[i - c, j - c] == 0 || table[i - c, j - c] > 10)
-                            { go[i - c, j - c] = 2; if (table[i - c, j - c] > 10) break; }
-                    for (c = 1; c < 8; c++)
-                        if (i - c >= 0 && j + c < 8)
-                            if (table[i - c, j + c] == 0 || table[i - c, j + c] > 10)
-                            { go[i - c, j + c] = 2; if (table[i - c, j + c] > 10) break; }
+                                    if (table[i - c, j-c] == 0)
+                                    { go[i - c, j-c] = 2; }
+                                    else
+                                    {
+                                        if (table[i - c, j-c] < 10) break;
+                                        else go[i - c, j-c] = 2; break;
+                                    }
                     for (c = 1; c < 8; c++)
                         if (i + c < 8 && j + c < 8)
-                            if (table[i + c, j + c] == 0 || table[i + c, j + c] > 10)
-                            { go[i + c, j + c] = 2; if (table[i + c, j + c] > 10) break; }
+                            if (table[i + c, j + c] == 0)
+                            { go[i + c, j + c] = 2; }
+                            else
+                            {
+                                if (table[i + c, j + c] < 10) break;
+                                else go[i + c, j + c] = 2; break;
+                            }
+                    for (c = 1; c < 8; c++)
+                        if (i - c >=0 && j + c < 8)
+                            if (table[i - c, j + c] == 0)
+                            { go[i - c, j + c] = 2; }
+                            else
+                            {
+                                if (table[i - c, j + c] < 10) break;
+                                else go[i - c, j + c] = 2; break;
+                            }
+
                     for (c = 1; c < 8; c++)
                         if (i + c < 8 && j - c >= 0)
-                            if (table[i + c, j - c] == 0 || table[i + c, j - c] > 10)
-                            { go[i + c, j - c] = 2; if (table[i + c, j - c] > 10) break; }
+                            if (table[i + c, j - c] == 0)
+                            {
+                                go[i + c, j - c] = 2;
+                            }
+                            else{
+                                if (table[i + c, j - c] < 10) break;
+                                else go[i + c, j - c] = 2;  break; }
                     break;
                 case 6:
                     if (i - 1 >= 0)
